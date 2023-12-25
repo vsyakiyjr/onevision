@@ -1,0 +1,16 @@
+{
+    "name": "vsyakiyjr/onevision",
+    "minimum-stability": "dev",
+    "authors": [
+        {
+            "name": "Denis Vsyachenkov",
+            "email": "litervsyakiyj@gmail.com"
+        }
+    ],
+    "repositories": [
+        {
+            "type": "path",
+            "url":  "../../packages/vsyakiy/packages/VsJR/OneVision"
+        }, 
+    ], 
+} 
