@@ -11,5 +11,10 @@
         "guzzlehttp/guzzle": "~7.5",
         "guzzlehttp/psr7": "^2.4",
         "psr/http-client": "~1.0"
-	}
+	},
+    "autoload": {
+        "psr-4": {
+            "Onevision\\": "src/"
+        } 
+    }
 } 
