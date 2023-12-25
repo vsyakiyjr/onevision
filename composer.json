@@ -7,7 +7,9 @@
             "email": "litervsyakiyj@gmail.com"
         }
     ], 
-	"require": {
-		"vsyakiyjr/onevision": "*"
+	"require": { 
+        "guzzlehttp/guzzle": "~7.5",
+        "guzzlehttp/psr7": "^2.4",
+        "psr/http-client": "~1.0"
 	},
 } 
