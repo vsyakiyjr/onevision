@@ -1,73 +1,72 @@
 <?php
  
 namespace vsyakiyjr\onevision;
-
-use GuzzleHttp\ClientInterface;
-
-/*
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
-use GuzzleHttp\Exception\GuzzleException;
-use AvtoDev\CloudPayments\Exceptions\CloudPaymentsRequestException;
-*/
-
+ 
 class Client
 {
     /**
-     * @var ClientInterface
+     * @var string
      */
-    protected $client;
+    protected $url = 'https://api.onevisionpay.com';
+ 
+    /**
+     * @var string
+     */
+    protected $apiKey;
 
     /**
-     * @var Config
+     * @var string
      */
-    protected $config;
+    protected $secretKey;
 
     /**
-     * Create a new Client instance.
-     *
-     * @param ClientInterface $client
-     * @param Config          $config
+     * @param $apiKey
+     * @param $secretKey
      */
-    public function __construct(ClientInterface $client, Config $config)
+    public function __construct($apiKey, $secretKey)
     {
-        $this->client = $client;
-        $this->config = $config;
+        $this->apiKey = $apiKey;
+        $this->secretKey = $secretKey;
     }
 
     /**
-     * @param RequestInterface $request
-     *
-     * @throws CloudPaymentsRequestException
-     *
-     * @return ResponseInterface
-     */
-    /*public function send(RequestInterface $request): ResponseInterface
-    {
-        $request = $this->updateRequest($request);
-        try {
-            return $this->client->send($request);
-        } catch (GuzzleException $exception) {
-            /** @var \Exception $exception *//*
-            throw CloudPaymentsRequestException::wrapException($request, $exception);
-        }
-    }
-*/
-    /**
-     * Put authorization header into request.
-     *
-     * @param RequestInterface $request
-     *
-     * @return RequestInterface
-     *//*
-    public function updateRequest(RequestInterface $request): RequestInterface
-    {
-        /** @var RequestInterface $request *//*
-        $request = $request->withHeader(
-            'Authorization',
-            'Basic ' . base64_encode($this->config->getPublicId() . ':' . $this->config->getApiKey())
-        );
+     * @param string $endpoint
+     * @param array $params
+     * @param array $headers
+     * @return array
+     */ 
+    public function sendRequest($endpoint, array $params = [], array $headers = [])
+    { 
+		$secret_key = $this->secretKey;  
 
-        return $request;
-    }*/
+        $dataObject = $params;
+
+        $dataJson = json_encode($dataObject);  
+           
+        $data = base64_encode($dataJson); 
+        $sign = hash_hmac('sha512', $data, $this->secretKey); 
+ 
+        $obj = [
+            "data" => $data,
+			"sign" => $sign
+        ];
+		   
+        $headers[] = 'Content-Type: application/json';
+        $headers[] = 'Authorization: Bearer ' . base64_encode($this->apiKey);
+  
+        $curl = curl_init($this->url . $endpoint); 
+   
+        curl_setopt($curl, CURLOPT_TIMEOUT, 20);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($curl, CURLOPT_POST, true);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($obj));
+        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+
+        $result = curl_exec($curl);
+
+        curl_close($curl);
+
+        return (array) json_decode($result, true); 
+    } 
 }
